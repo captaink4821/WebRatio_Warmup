@@ -1,0 +1,122 @@
+<Screen xmlns:gr="http://www.webratio.com/2006/WebML/Graph" xmlns:layout="http://www.webratio.com/2006/WebML/Layout" gr:x="20" gr:y="175" id="av1#scr1" name="Animals">
+  <ViewComponents>
+    <List gr:x="260" gr:y="0" id="av1#scr1#pwu1" name="Animals" checkable="false" dataBinding="cls1" displayAttributes="cls1#att2 cls1#att3 cls1#att4" eventOrder="av1#scr1#pwu1#oslte1">
+      <Events>
+        <OnSelectEvent id="av1#scr1#pwu1#oslte1" name="Select Animal" validate="true">
+          <NavigationFlow id="av1#scr1#pwu1#oslte1#nf1" to="av1#scr2#dau1" automaticCoupling="true"/>
+        </OnSelectEvent>
+      </Events>
+      <SortAttribute attribute="cls1#att2" order="ascending"/>
+      <ConditionalExpression id="av1#scr1#pwu1#sc6" defaultPolicy="fill" booleanOperator="or">
+        <AttributesCondition id="av1#scr1#pwu1#sc6#acond3" name="Name Condition" predicate="contains" booleanOperator="or" implied="true" ignoreCase="true" attributes="cls1#att2"/>
+        <AttributesCondition id="av1#scr1#pwu1#sc6#acond4" name="Species Condition" predicate="contains" booleanOperator="or" implied="true" attributes="cls1#att3" ignoreCase="true"/>
+      </ConditionalExpression>
+    </List>
+    <Form gr:x="30" gr:y="20" id="av1#scr1#enu3" name="Search Animals by Keyword" fieldOrder="av1#scr1#enu3#fld4" eventOrder="av1#scr1#enu3#oslte10">
+      <Field id="av1#scr1#enu3#fld4" name="Keyword" type="string" modifiable="true"/>
+      <Events>
+        <OnSelectEvent id="av1#scr1#enu3#oslte10" name="search" validate="true">
+          <NavigationFlow id="av1#scr1#enu3#oslte10#nf17" to="av1#scr1#pwu1">
+            <ParameterBinding id="av1#scr1#enu3#oslte10#nf17#par32" source="av1#scr1#enu3#fld4" target="av1#scr1#pwu1#sc6#acond3" name="Keyword - Name Condition"/>
+            <ParameterBinding id="av1#scr1#enu3#oslte10#nf17#par33" source="av1#scr1#enu3#fld5" target="av1#scr1#pwu1#sc6#acond5" name="Keyword - Seen Condition"/>
+            <ParameterBinding id="av1#scr1#enu3#oslte10#nf17#par34" source="av1#scr1#enu3#fld4" target="av1#scr1#pwu1#sc6#acond4" name="Keyword - Species Condition"/>
+          </NavigationFlow>
+        </OnSelectEvent>
+      </Events>
+    </Form>
+  </ViewComponents>
+  <layout:Grid containerType="grid">
+    <layout:Row>
+      <layout:Cell colspan="12">
+        <layout:Component componentId="av1#scr1#enu3">
+          <layout:Event event="av1#scr1#enu3#oslte10" eventType="OnSelectEvent"/>
+          <layout:Field field="av1#scr1#enu3#fld4"/>
+        </layout:Component>
+      </layout:Cell>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+    </layout:Row>
+    <layout:Row>
+      <layout:Cell colspan="12">
+        <layout:Component componentId="av1#scr1#pwu1">
+          <layout:Attribute attribute="cls1#att2"/>
+          <layout:Attribute attribute="cls1#att3"/>
+          <layout:Attribute attribute="cls1#att4"/>
+          <layout:Event event="av1#scr1#pwu1#oslte1" eventType="OnSelectEvent"/>
+        </layout:Component>
+      </layout:Cell>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+    </layout:Row>
+    <layout:Row>
+      <layout:Cell colspan="12"/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+    </layout:Row>
+    <layout:Row>
+      <layout:Cell colspan="12"/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+    </layout:Row>
+    <layout:Row>
+      <layout:Cell colspan="12">
+        <layout:Event panelId="av1#scr1#tlb1" event="av1#scr1#tlb1#oslte2" eventType="OnSelectEvent"/>
+      </layout:Cell>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+      <layout:Cell/>
+    </layout:Row>
+  </layout:Grid>
+  <Toolbar gr:x="415" gr:y="130" id="av1#scr1#tlb1" name="Toolbar">
+    <ViewComponents/>
+    <Events>
+      <OnSelectEvent id="av1#scr1#tlb1#oslte2" name="Add New">
+        <NavigationFlow id="av1#scr1#tlb1#oslte2#nf2" to="av1#scr3" automaticCoupling="true"/>
+      </OnSelectEvent>
+    </Events>
+  </Toolbar>
+</Screen>
