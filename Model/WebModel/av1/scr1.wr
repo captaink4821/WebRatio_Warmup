@@ -1,4 +1,4 @@
-<Screen xmlns:gr="http://www.webratio.com/2006/WebML/Graph" xmlns:layout="http://www.webratio.com/2006/WebML/Layout" gr:x="20" gr:y="175" id="av1#scr1" name="Animals">
+<Screen xmlns:gr="http://www.webratio.com/2006/WebML/Graph" xmlns:layout="http://www.webratio.com/2006/WebML/Layout" gr:x="15" gr:y="200" id="av1#scr1" name="Animals" protected="true">
   <ViewComponents>
     <List gr:x="260" gr:y="0" id="av1#scr1#pwu1" name="Animals" checkable="false" dataBinding="cls1" displayAttributes="cls1#att2 cls1#att3 cls1#att4" eventOrder="av1#scr1#pwu1#oslte1">
       <Events>

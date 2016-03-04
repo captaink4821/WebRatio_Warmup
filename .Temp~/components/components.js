@@ -50,7 +50,7 @@
 
 	var mod0 = _interopRequireWildcard(_import);
 
-	var _import2 = __webpack_require__(9);
+	var _import2 = __webpack_require__(5);
 
 	var mod1 = _interopRequireWildcard(_import2);
 
@@ -66,21 +66,37 @@
 
 	var mod4 = _interopRequireWildcard(_import5);
 
-	var _import6 = __webpack_require__(5);
+	var _import6 = __webpack_require__(12);
 
 	var mod5 = _interopRequireWildcard(_import6);
 
-	var _import7 = __webpack_require__(6);
+	var _import7 = __webpack_require__(13);
 
 	var mod6 = _interopRequireWildcard(_import7);
 
-	var _import8 = __webpack_require__(7);
+	var _import8 = __webpack_require__(6);
 
 	var mod7 = _interopRequireWildcard(_import8);
 
-	var _import9 = __webpack_require__(8);
+	var _import9 = __webpack_require__(7);
 
 	var mod8 = _interopRequireWildcard(_import9);
+
+	var _import10 = __webpack_require__(8);
+
+	var mod9 = _interopRequireWildcard(_import10);
+
+	var _import11 = __webpack_require__(9);
+
+	var mod10 = _interopRequireWildcard(_import11);
+
+	var _import12 = __webpack_require__(10);
+
+	var mod11 = _interopRequireWildcard(_import12);
+
+	var _import13 = __webpack_require__(11);
+
+	var mod12 = _interopRequireWildcard(_import13);
 
 	wrm.defineModule("wrm/comp/FormService", mod0);
 
@@ -92,13 +108,21 @@
 
 	wrm.defineModule("wrm/comp/ListService", mod4);
 
-	wrm.defineModule("wrm/comp/CreateService", mod5);
+	wrm.defineModule("wrm/comp/val/EMailValidationRuleService", mod5);
 
-	wrm.defineModule("wrm/comp/UpdateService", mod6);
+	wrm.defineModule("wrm/comp/val/MandatoryValidationRuleService", mod6);
 
-	wrm.defineModule("wrm/comp/SwitchService", mod7);
+	wrm.defineModule("wrm/comp/CreateService", mod7);
 
-	wrm.defineModule("wrm/comp/DeleteService", mod8);
+	wrm.defineModule("wrm/comp/UpdateService", mod8);
+
+	wrm.defineModule("wrm/comp/SwitchService", mod9);
+
+	wrm.defineModule("wrm/comp/DeleteService", mod10);
+
+	wrm.defineModule("wrm/comp/LoginService", mod11);
+
+	wrm.defineModule("wrm/comp/RegisterService", mod12);
 
 /***/ },
 /* 1 */
@@ -1180,6 +1204,205 @@
 	    value: true
 	});
 	/**
+	 * Service for Selector view components and operations.
+	 * 
+	 * @constructor
+	 * @extends wrm.core.AbstractCachedViewComponentService
+	 * @implements wrm.OperationService
+	 * @param {string} id
+	 * @param {!Object} descr
+	 * @param {!wrm.core.Manager} manager
+	 */
+	exports.default = wrm.defineService(wrm.core.AbstractCachedViewComponentService, {
+
+	    /** @override */
+	    initialize: function (descr) {
+	        var thisService = this;
+
+	        /**
+	         * @private
+	         * @type {!wrm.data.meta.Entity}
+	         */
+	        this._entity; // init'd below
+
+	        /**
+	         * @private
+	         * @type {string}
+	         */
+	        this._entityId; // init'd below
+
+	        // TODO cache query instead
+	        /**
+	         * @private
+	         * @type {!Object}
+	         */
+	        this._condExpr; // init'd below
+
+	        /**
+	         * @private
+	         * @type {!number}
+	         */
+	        this._maxResults = descr["maxResults"];
+
+	        /**
+	         * @private
+	         * @type {!boolean}
+	         */
+	        this._distinct = descr["distinct"] || false;
+
+	        /**
+	         * @private
+	         * @type {!Object}
+	         */
+	        this._output; // init'd below
+
+	        /**
+	         * @private
+	         * @type {!Object}
+	         */
+	        this._toBind; // init'd below
+
+	        /**
+	         * @private
+	         * @type {!Array}
+	         */
+	        this._order = descr["order"];
+
+	        /**
+	         * @private
+	         * @type {!wrm.data.DataService}
+	         */
+	        this._dataService; // init'd below
+
+	        return this.getManager().getDataService().then(function (dataService) {
+	            thisService._dataService = dataService;
+	            thisService._entity = dataService.getMetadata().getEntity(descr["entity"]);
+	            thisService._entityid = thisService._entity.getId();
+	            thisService._condExpr = descr["condExprs"];
+	            var output = descr["output"];
+	            thisService._output = {};
+	            thisService._toBind = {};
+	            if (output.length !== 0) {
+	                output.forEach(function (column) {
+	                    thisService._output[column["viewName"]] = column["ref"];
+	                    thisService._toBind[column["viewName"]] = column["bindName"];
+	                });
+	            } else {
+	                var keyAtt = thisService._entity.getKeyAttribute();
+	                thisService._output[keyAtt.getName()] = keyAtt.getId();
+	                thisService._toBind[keyAtt.getName()] = keyAtt.getId();
+	            }
+	        });
+	    },
+
+	    /** @override */
+	    executeOperation: function (context) {
+	        var resultsPromise = this._askResult(context.getInput());
+	        var thisService = this;
+
+	        return resultsPromise.then(function (rows) {
+
+	            var outputResult = [];
+	            var toBind = thisService._toBind;
+	            var outputLabels = thisService._output;
+
+	            rows.forEach(function (currentRow) {
+	                var outputData = {};
+	                Object.keys(outputLabels).forEach(function (key) {
+	                    outputData[toBind[key]] = currentRow[key];
+	                });
+	                outputResult.push(outputData);
+	            });
+
+	            var output = {
+	                "data": wrm.util.obj.extractPropertyValues(outputResult),
+	                "dataSize": rows.length
+	            };
+
+	            var code = output["dataSize"] === 0 ? "success.Not Found" : "success";
+	            return new wrm.nav.Output(code, output);
+	        }, function (e) {
+	            return new wrm.nav.Output("error");
+	        });
+	    },
+
+	    /** @override */
+	    createResult: function (context) {
+	        var input = context.getInput();
+	        var thisService = this;
+	        var resultsPromise = this._askResult(input);
+
+	        return resultsPromise.then(function (rows) {
+
+	            var outputResult = [];
+	            var toBind = thisService._toBind;
+	            var outputLabels = thisService._output;
+
+	            rows.forEach(function (currentRow) {
+	                var outputData = {};
+	                Object.keys(outputLabels).forEach(function (key) {
+	                    outputData[toBind[key]] = currentRow[key];
+	                });
+	                outputResult.push(outputData);
+	            });
+
+	            var output = {
+	                "data": wrm.util.obj.extractPropertyValues(outputResult),
+	                "dataSize": rows.length
+	            };
+
+	            return output;
+	        }, function (e) {
+	            thisService.getLog().error(e);
+	        });
+	    },
+
+	    /** @override */
+	    computeOutputFromResult: function (context, result) {
+	        var output = {
+	            "data": result["data"],
+	            "dataSize": result["dataSize"]
+	        };
+	        return output;
+	    },
+
+	    /**
+	     * @private
+	     * @param {!wrm.nav.Input} input
+	     * @returns {Promise|Array.<Object>}
+	     */
+	    _askResult: function (input) {
+	        var thisService = this;
+	        return this._dataService.execute(function (d) {
+	            var options = {
+	                output: thisService._output,
+	                outputConfig: { useNames: true },
+	                distinct: thisService._distinct,
+	                filter: thisService._condExpr,
+	                order: thisService._order
+	            };
+
+	            var resultsLength = input["maxResults"] || thisService._maxResults;
+	            if (resultsLength > 0) {
+	                var limit = {
+	                    count: resultsLength
+	                };
+	                options["limit"] = limit;
+	            }
+
+	            return d.select(thisService._entityid, options, input);
+	        });
+	    } });
+	module.exports = exports.default;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	/**
 	 * Service for Create operations.
 	 * 
 	 * @constructor
@@ -1327,7 +1550,7 @@
 	module.exports = exports.default;
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	Object.defineProperty(exports, "__esModule", {
@@ -1576,7 +1799,7 @@
 	module.exports = exports.default;
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	Object.defineProperty(exports, "__esModule", {
@@ -1628,7 +1851,7 @@
 	module.exports = exports.default;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	Object.defineProperty(exports, "__esModule", {
@@ -1699,23 +1922,142 @@
 	module.exports = exports.default;
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 	/**
-	 * Service for Selector view components and operations.
+	 * Service for Login operations.
 	 * 
 	 * @constructor
-	 * @extends wrm.core.AbstractCachedViewComponentService
-	 * @implements wrm.OperationService
+	 * @extends wrm.core.AbstractOperationService
 	 * @param {string} id
 	 * @param {!Object} descr
 	 * @param {!wrm.core.Manager} manager
 	 */
-	exports.default = wrm.defineService(wrm.core.AbstractCachedViewComponentService, {
+	exports.default = wrm.defineService(wrm.core.AbstractOperationService, {
+
+	    /** @override */
+	    initialize: function (descr) {
+	        var thisService = this;
+
+	        /**
+	         * @private
+	         * @type {boolean}
+	         */
+	        this._onlySaveCredentials = descr["onlySaveCredentials"] || false;
+
+	        /**
+	         * @private
+	         * @type {!wrm.core.SecurityService}
+	         */
+	        this._securityService; // set below
+
+	        /**
+	         * @private
+	         * @type {!wrm.data.DataService}
+	         */
+	        this._dataService; // set below
+
+	        return Promise.all([this.getManager().getSecurityService().then(function (securityService) {
+	            thisService._securityService = securityService;
+	        }), this.getManager().getDataService().then(function (dataService) {
+	            thisService._dataService = dataService;
+	        })]);
+	    },
+
+	    /** @override */
+	    executeOperation: function (context) {
+	        var thisService = this;
+	        var securityService = this._securityService;
+	        var input = context.getInput();
+
+	        var username = wrm.data.toString(input["username"]);
+	        var password = wrm.data.toString(input["password"]);
+	        var token = wrm.data.toString(input["token"]);
+
+	        if (typeof username !== "string" || typeof password !== "string") {
+	            throw new Error("Missing username or password");
+	        }
+
+	        var oldAuthUsername;
+
+	        /*
+	         * Obtain authentication information by performing a "real" access or by just taking the inputs as correct. The behavior
+	         * depends on the 'onlySaveCredentials' specified by the descriptor.
+	         */
+	        var promise = securityService.retrieveAuthUsername().then(function (oldUsername) {
+	            oldAuthUsername = oldUsername;
+	        }).then(function () {
+	            if (thisService._onlySaveCredentials) {
+	                return thisService._createAuthInfo(username, password, token);
+	            }
+	            return securityService.authenticate(username, password);
+	        });
+
+	        var currentAuthUsername;
+
+	        /* If authentication is successful, store user information (effectively logging the user in) */
+	        promise = promise.then(function (authInfo) {
+	            currentAuthUsername = authInfo.userInfo.getUsername();
+	            return securityService.setAuthInfo(authInfo);
+	        }).then(function () {
+	            if (!oldAuthUsername || oldAuthUsername !== currentAuthUsername) {
+	                return thisService._dataService.restoreInitialData();
+	            }
+	        }).then(function () {
+	            context.clearPastNavigationsHistory();
+	            return new wrm.nav.Output("success");
+	        });
+
+	        /* In case of error, return an appropriate output code */
+	        promise = promise["catch"](function (e) {
+	            var result = e instanceof wrm.core.AuthenticationError ? "error" : "error.Internal Error";
+	            return new wrm.nav.Output(result, {
+	                "errorMessage": e.message
+	            });
+	        });
+
+	        return promise;
+	    },
+
+	    /**
+	     * @private
+	     * @param {string} username
+	     * @param {string} password
+	     * @param {?string|undefined} token
+	     * @return {{userInfo:!wrm.core.UserInfo, password:string, token:?string}}
+	     */
+	    _createAuthInfo: function (username, password, token) {
+	        return {
+	            userInfo: new wrm.core.UserInfo(username, null, {}, {}),
+	            password: password,
+	            token: token || null
+	        };
+	    }
+
+	});
+	module.exports = exports.default;
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	/**
+	 * Service for Register operations.
+	 * 
+	 * @constructor
+	 * @extends wrm.core.AbstractOperationService
+	 * @param {string} id
+	 * @param {!Object} descr
+	 * @param {!wrm.core.Manager} manager
+	 */
+	exports.default = wrm.defineService(wrm.core.AbstractOperationService, {
 
 	    /** @override */
 	    initialize: function (descr) {
@@ -1725,175 +2067,216 @@
 	         * @private
 	         * @type {!wrm.data.meta.Entity}
 	         */
-	        this._entity; // init'd below
+	        this._userEntity; // set below
 
-	        /**
-	         * @private
-	         * @type {string}
-	         */
-	        this._entityId; // init'd below
-
-	        // TODO cache query instead
-	        /**
-	         * @private
-	         * @type {!Object}
-	         */
-	        this._condExpr; // init'd below
-
-	        /**
-	         * @private
-	         * @type {!number}
-	         */
-	        this._maxResults = descr["maxResults"];
-
-	        /**
-	         * @private
-	         * @type {!boolean}
-	         */
-	        this._distinct = descr["distinct"] || false;
-
-	        /**
-	         * @private
-	         * @type {!Object}
-	         */
-	        this._output; // init'd below
-
-	        /**
-	         * @private
-	         * @type {!Object}
-	         */
-	        this._toBind; // init'd below
-
-	        /**
-	         * @private
-	         * @type {!Array}
-	         */
-	        this._order = descr["order"];
-
-	        /**
-	         * @private
-	         * @type {!wrm.data.DataService}
-	         */
-	        this._dataService; // init'd below
-
-	        return this.getManager().getDataService().then(function (dataService) {
-	            thisService._dataService = dataService;
-	            thisService._entity = dataService.getMetadata().getEntity(descr["entity"]);
-	            thisService._entityid = thisService._entity.getId();
-	            thisService._condExpr = descr["condExprs"];
-	            var output = descr["output"];
-	            thisService._output = {};
-	            thisService._toBind = {};
-	            if (output.length !== 0) {
-	                output.forEach(function (column) {
-	                    thisService._output[column["viewName"]] = column["ref"];
-	                    thisService._toBind[column["viewName"]] = column["bindName"];
-	                });
-	            } else {
-	                var keyAtt = thisService._entity.getKeyAttribute();
-	                thisService._output[keyAtt.getName()] = keyAtt.getId();
-	                thisService._toBind[keyAtt.getName()] = keyAtt.getId();
+	        return this.getManager().getSecurityService().then(function (securityService) {
+	            thisService._userEntity = securityService.getUserEntity();
+	            if (!securityService.isUserServiceAvailable()) {
+	                throw new Error("User services are not available");
 	            }
 	        });
 	    },
 
 	    /** @override */
 	    executeOperation: function (context) {
-	        var resultsPromise = this._askResult(context.getInput());
-	        var thisService = this;
-
-	        return resultsPromise.then(function (rows) {
-
-	            var outputResult = [];
-	            var toBind = thisService._toBind;
-	            var outputLabels = thisService._output;
-
-	            rows.forEach(function (currentRow) {
-	                var outputData = {};
-	                Object.keys(outputLabels).forEach(function (key) {
-	                    outputData[toBind[key]] = currentRow[key];
-	                });
-	                outputResult.push(outputData);
-	            });
-
-	            var output = {
-	                "data": wrm.util.obj.extractPropertyValues(outputResult),
-	                "dataSize": rows.length
-	            };
-
-	            var code = output["dataSize"] === 0 ? "success.Not Found" : "success";
-	            return new wrm.nav.Output(code, output);
-	        }, function (e) {
-	            return new wrm.nav.Output("error");
-	        });
-	    },
-
-	    /** @override */
-	    createResult: function (context) {
+	        var manager = this.getManager();
 	        var input = context.getInput();
-	        var thisService = this;
-	        var resultsPromise = this._askResult(input);
+	        var username = wrm.data.toString(input["username"]);
+	        var password = wrm.data.toString(input["password"]);
 
-	        return resultsPromise.then(function (rows) {
+	        /* Compute the user object */
+	        var userObject = this._computeUserObject(input);
 
-	            var outputResult = [];
-	            var toBind = thisService._toBind;
-	            var outputLabels = thisService._output;
-
-	            rows.forEach(function (currentRow) {
-	                var outputData = {};
-	                Object.keys(outputLabels).forEach(function (key) {
-	                    outputData[toBind[key]] = currentRow[key];
-	                });
-	                outputResult.push(outputData);
+	        /* Invoke the back-end user registration service */
+	        var promise = manager.getSecurityService().then(function (securityService) {
+	            if (typeof username !== "string" || typeof password !== "string") {
+	                throw new Error("Missing username or password");
+	            }
+	            return securityService.registerUser(username, password, userObject);
+	        }).then(function (newUserInfo) {
+	            return new wrm.nav.Output("success", {
+	                "username": username,
+	                "password": password
 	            });
-
-	            var output = {
-	                "data": wrm.util.obj.extractPropertyValues(outputResult),
-	                "dataSize": rows.length
-	            };
-
-	            return output;
-	        }, function (e) {
-	            thisService.getLog().error(e);
 	        });
-	    },
 
-	    /** @override */
-	    computeOutputFromResult: function (context, result) {
-	        var output = {
-	            "data": result["data"],
-	            "dataSize": result["dataSize"]
-	        };
-	        return output;
+	        /* In case of error, return an appropriate output code */
+	        promise = promise["catch"](function (e) {
+	            return new wrm.nav.Output("error", {
+	                "errorMessage": e.message
+	            });
+	        });
+	        return promise;
 	    },
 
 	    /**
 	     * @private
 	     * @param {!wrm.nav.Input} input
-	     * @returns {Promise|Array.<Object>}
+	     * @returns {!Object}
 	     */
-	    _askResult: function (input) {
-	        var thisService = this;
-	        return this._dataService.execute(function (d) {
-	            var options = {
-	                output: thisService._output,
-	                outputConfig: { useNames: true },
-	                distinct: thisService._distinct,
-	                filter: thisService._condExpr,
-	                order: thisService._order
-	            };
+	    _computeUserObject: function (input) {
+	        var result = {};
+	        this._userEntity.getProperties().forEach(function (property) {
+	            var propertyId = property.getId();
+	            if (input[propertyId] !== undefined) {
+	                result[propertyId] = input[propertyId];
+	            }
+	        });
+	        return result;
+	    } });
+	module.exports = exports.default;
 
-	            var resultsLength = input["maxResults"] || thisService._maxResults;
-	            if (resultsLength > 0) {
-	                var limit = {
-	                    count: resultsLength
-	                };
-	                options["limit"] = limit;
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	/**
+	 * Service for EMail validation rules.
+	 * 
+	 * @constructor
+	 * @extends wrm.val.AbstractPropertyValidationRuleService
+	 * @param {string} id
+	 * @param {!Object} descr
+	 * @param {!wrm.core.Manager} manager
+	 */
+	exports.default = wrm.defineService(wrm.val.AbstractPropertyValidationRuleService, {
+
+	    /** @override */
+	    validate: function (context) {
+	        var property = context.getElement();
+	        var propertyValue = property.getValue();
+	        if (propertyValue === undefined || propertyValue === null || propertyValue === "") {
+	            return wrm.val.RulePolicy.CONTINUE;
+	        }
+	        /* regex copied from http://scraping.pro/email-validation-regexes and added capital letters */
+	        var mailRegex = /^(?:[a-zA-Z0-9!#$%&'*+/=?^_{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-zA-Z0-9-]*[a-zA-Z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
+	        if (!mailRegex.exec(propertyValue)) {
+	            property.addError(this.getMessageKey("error"));
+	            return wrm.val.RulePolicy.STOP;
+	        }
+	        return wrm.val.RulePolicy.CONTINUE;
+	    } });
+	module.exports = exports.default;
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	/**
+	 * Service for Mandatory validation rules.
+	 * 
+	 * @constructor
+	 * @extends wrm.val.AbstractPropertyValidationRuleService
+	 * @param {string} id
+	 * @param {!Object} descr
+	 * @param {!wrm.core.Manager} manager
+	 */
+	exports.default = wrm.defineService(wrm.val.AbstractPropertyValidationRuleService, {
+
+	    /** @override */
+	    initialize: function (descr) {
+
+	        /**
+	         * @private
+	         * @type {string|undefined}
+	         */
+	        this._companionFieldId = descr["companionProperty"] || undefined;
+
+	        /**
+	         * @private
+	         * @type {string|undefined}
+	         */
+	        this._predicate = this._companionFieldId && descr["predicate"];
+
+	        /**
+	         * @private
+	         * @type {boolean|undefined}
+	         */
+	        this._ignoreCase = this._companionFieldId && (descr["ignoreCase"] || false);
+
+	        /**
+	         * @private
+	         * @type {string|undefined}
+	         */
+	        this._value = this._companionFieldId && descr["value"];
+	    },
+
+	    /** @override */
+	    validate: function (context) {
+	        var property = context.getElement();
+	        var propertyValue = property.getValue();
+	        if (this._isEmpty(propertyValue) && this._isCompanionMatching(property)) {
+	            property.addError(this.getMessageKey("error"));
+	            return wrm.val.RulePolicy.STOP;
+	        }
+	        return wrm.val.RulePolicy.CONTINUE;
+	    },
+
+	    /**
+	     * @private
+	     * @param {!wrm.val.Property} property
+	     * @return {boolean}
+	     */
+	    _isCompanionMatching: function (property) {
+	        if (this._companionFieldId === undefined) {
+	            return true; // no companion
+	        }
+
+	        var companionValue = property.getObject().getProperty(this._companionFieldId).getValue();
+	        var ieEmptyCompanion = this._isEmpty(companionValue);
+	        if (this._value === undefined) {
+
+	            /* UNARY test on the companion value */
+	            switch (this._predicate) {
+	                case "empty":
+	                    return ieEmptyCompanion;
+	                case "notEmpty":
+	                    return !ieEmptyCompanion;
+	            }
+	        } else {
+
+	            /* Empty companions never pass a binary test */
+	            if (ieEmptyCompanion) {
+	                return false;
 	            }
 
-	            return d.select(thisService._entityid, options, input);
-	        });
+	            /* BINARY test against the (non empty) companion value */
+	            var value = this._value;
+	            var left = this._ignoreCase ? wrm.data.toString(companionValue).toLowerCase() : wrm.data.toString(companionValue);
+	            var right = this._ignoreCase ? value.toLowerCase() : value;
+	            switch (this._predicate) {
+	                case "eq":
+	                    return wrm.data.equal(left, right);
+	                case "gteq":
+	                    return wrm.data.compare(companionValue, value) >= 0;
+	                case "gt":
+	                    return wrm.data.compare(companionValue, value) > 0;
+	                case "lteq":
+	                    return wrm.data.compare(companionValue, value) <= 0;
+	                case "lt":
+	                    return wrm.data.compare(companionValue, value) < 0;
+	                case "neq":
+	                    return !wrm.data.equal(left, right);
+	            }
+	        }
+
+	        /* DEFAULT behavior: the companion only has to be filled */
+	        return !ieEmptyCompanion;
+	    },
+
+	    /**
+	     * @private
+	     * @param {*} value
+	     * @return {boolean}
+	     */
+	    _isEmpty: function (value) {
+	        return value === null || value === undefined || value === "";
 	    } });
 	module.exports = exports.default;
 

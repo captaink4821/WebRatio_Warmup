@@ -1,8 +1,12 @@
 <DomainModel xmlns:gr="http://www.webratio.com/2006/WebML/Graph" dataSyncManual="false" dataSyncOnReopen="true">
-  <Class gr:x="150" gr:y="160" id="MUser" name="App User" singleton="true" duration="persistent" attributeOrder="mUserOID mUsername">
+  <Class gr:x="150" gr:y="160" id="MUser" name="App User" singleton="true" duration="persistent" attributeOrder="mUserOID mUsername MUser#att5" serverResource="User" serverClass="User">
     <Attribute id="mUserOID" key="true" name="oid" type="integer" specialBehavior="implicitOid"/>
-    <Attribute id="mUsername" name="username" type="string"/>
+    <Attribute id="mUsername" name="username" type="string" key="false" serverAttribute="userName" serverProperty="userName"/>
     <Comment xml:space="preserve">App User represents the current user of the mobile application. The user is identified by username. For security reasons, other information, such as the password, is not stored here but in the device account manager. You are free to add any additional attribute to this class.  When using the Mobile Project in combination with a Data Service project, this class must be mapped on the remote User class, and thus inherits its attributes.</Comment>
+    <Attribute id="MUser#att5" name="remoteOid" specialBehavior="remoteOid" serverAttribute="userOID" serverProperty="oid" type="integer"/>
+    <Attribute id="MUser#att14" name="email" type="string" key="false" serverAttribute="email" serverProperty="email"/>
+    <Attribute id="MUser#att15" name="remote createdAt" type="timestamp" key="false" serverAttribute="User#att9" serverProperty="createdAt"/>
+    <Attribute id="MUser#att16" name="remote updatedAt" type="timestamp" key="false" serverAttribute="User#att10" serverProperty="updatedAt"/>
   </Class>
   <Class gr:x="450" gr:y="170" id="MRole" name="App Role" duration="persistent" attributeOrder="mRoleOID mRoleName">
     <Attribute id="mRoleOID" key="true" name="oid" type="integer" specialBehavior="implicitOid"/>
@@ -13,7 +17,7 @@
     <AssociationRole1 id="MUser2MRole" name="AppUserToAppRole" maxCard="N"/>
     <AssociationRole2 id="MRole2MUser" name="AppRoleToAppUser" maxCard="1"/>
   </Association>
-  <Class gr:x="315" gr:y="345" id="cls1" name="Animal" duration="persistent" attributeOrder="cls1#att1 cls1#att2 cls1#att3 cls1#att4 cls1#att8 cls1#att9 cls1#att10" serverResourceMethods="read create update delete" serverResource="Animal" serverClass="cls1">
+  <Class gr:x="315" gr:y="345" id="cls1" name="Animal" duration="persistent" attributeOrder="cls1#att1 cls1#att2 cls1#att3 cls1#att4 cls1#att8 cls1#att9 cls1#att10" serverResourceMethods="create delete read update" serverResource="Animal" serverClass="cls1">
     <Attribute id="cls1#att1" key="true" name="oid" type="integer" specialBehavior="implicitOid"/>
     <Attribute id="cls1#att4" name="Seen" type="boolean" key="false"/>
     <Attribute id="cls1#att3" name="Species" type="string" key="false"/>
@@ -21,5 +25,10 @@
     <Attribute id="cls1#att8" name="remoteOid" specialBehavior="remoteOid" serverAttribute="cls1#att1" serverProperty="oid" type="integer"/>
     <Attribute id="cls1#att9" name="createdAt" specialBehavior="unsentCreateTimestamp" type="timestamp"/>
     <Attribute id="cls1#att10" name="updatedAt" specialBehavior="unsentUpdateTimestamp" type="timestamp"/>
+    <Attribute id="cls1#att6" name="Seen2" type="boolean" key="false" serverAttribute="cls1#att4" serverProperty="seen"/>
+    <Attribute id="cls1#att7" name="Species2" type="string" key="false" serverAttribute="cls1#att3" serverProperty="species"/>
+    <Attribute id="cls1#att11" name="Name2" type="string" key="false" serverAttribute="cls1#att2" serverProperty="name"/>
+    <Attribute id="cls1#att12" name="remote createdAt" type="timestamp" key="false" serverAttribute="cls1#att5" serverProperty="createdAt"/>
+    <Attribute id="cls1#att13" name="remote updatedAt" type="timestamp" key="false" serverAttribute="cls1#att6" serverProperty="updatedAt"/>
   </Class>
 </DomainModel>
