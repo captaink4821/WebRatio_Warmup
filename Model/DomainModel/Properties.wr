@@ -13,10 +13,13 @@
     <AssociationRole1 id="MUser2MRole" name="AppUserToAppRole" maxCard="N"/>
     <AssociationRole2 id="MRole2MUser" name="AppRoleToAppUser" maxCard="1"/>
   </Association>
-  <Class gr:x="315" gr:y="345" id="cls1" name="Animal" duration="persistent" attributeOrder="cls1#att1 cls1#att2 cls1#att3 cls1#att4" serverResourceMethods="read create update delete">
+  <Class gr:x="315" gr:y="345" id="cls1" name="Animal" duration="persistent" attributeOrder="cls1#att1 cls1#att2 cls1#att3 cls1#att4 cls1#att8 cls1#att9 cls1#att10" serverResourceMethods="read create update delete" serverResource="Animal" serverClass="cls1">
     <Attribute id="cls1#att1" key="true" name="oid" type="integer" specialBehavior="implicitOid"/>
     <Attribute id="cls1#att4" name="Seen" type="boolean" key="false"/>
     <Attribute id="cls1#att3" name="Species" type="string" key="false"/>
     <Attribute id="cls1#att2" name="Name" type="string" key="false"/>
+    <Attribute id="cls1#att8" name="remoteOid" specialBehavior="remoteOid" serverAttribute="cls1#att1" serverProperty="oid" type="integer"/>
+    <Attribute id="cls1#att9" name="createdAt" specialBehavior="unsentCreateTimestamp" type="timestamp"/>
+    <Attribute id="cls1#att10" name="updatedAt" specialBehavior="unsentUpdateTimestamp" type="timestamp"/>
   </Class>
 </DomainModel>
