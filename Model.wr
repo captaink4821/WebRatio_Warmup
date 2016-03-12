@@ -4,5 +4,5 @@
 <WebProject xmlns:gr="http://www.webratio.com/2006/WebML/Graph" outputPath="${mobileapps_loc}/${project_name}" gr:showUnitContent="true" gr:showTooltip="true" enableProjectDependencies="true" toolVersion="8.7.4" backEndBaseUrl="http://free13449-freeapp.eu.webratio.net/">
   <ServiceDataProviders/>
   <Roles/>
-  <ReferencedProject name="ClassProject1back-end" natureId="com.webratio.ide.DataServiceNature"/>
+  <ReferencedProject name="UserAccountBack-end" natureId="com.webratio.ide.DataServiceNature"/>
 </WebProject>

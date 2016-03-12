@@ -54,23 +54,23 @@
 
 	var mod1 = _interopRequireWildcard(_import2);
 
-	var _import3 = __webpack_require__(2);
+	var _import3 = __webpack_require__(13);
 
 	var mod2 = _interopRequireWildcard(_import3);
 
-	var _import4 = __webpack_require__(3);
+	var _import4 = __webpack_require__(14);
 
 	var mod3 = _interopRequireWildcard(_import4);
 
-	var _import5 = __webpack_require__(4);
+	var _import5 = __webpack_require__(2);
 
 	var mod4 = _interopRequireWildcard(_import5);
 
-	var _import6 = __webpack_require__(12);
+	var _import6 = __webpack_require__(3);
 
 	var mod5 = _interopRequireWildcard(_import6);
 
-	var _import7 = __webpack_require__(13);
+	var _import7 = __webpack_require__(4);
 
 	var mod6 = _interopRequireWildcard(_import7);
 
@@ -98,19 +98,23 @@
 
 	var mod12 = _interopRequireWildcard(_import13);
 
+	var _import14 = __webpack_require__(12);
+
+	var mod13 = _interopRequireWildcard(_import14);
+
 	wrm.defineModule("wrm/comp/FormService", mod0);
 
 	wrm.defineModule("wrm/comp/SelectorService", mod1);
 
-	wrm.defineModule("wrm/comp/DetailsService", mod2);
+	wrm.defineModule("wrm/comp/val/EMailValidationRuleService", mod2);
 
-	wrm.defineModule("wrm/comp/MessageService", mod3);
+	wrm.defineModule("wrm/comp/val/MandatoryValidationRuleService", mod3);
 
-	wrm.defineModule("wrm/comp/ListService", mod4);
+	wrm.defineModule("wrm/comp/DetailsService", mod4);
 
-	wrm.defineModule("wrm/comp/val/EMailValidationRuleService", mod5);
+	wrm.defineModule("wrm/comp/MessageService", mod5);
 
-	wrm.defineModule("wrm/comp/val/MandatoryValidationRuleService", mod6);
+	wrm.defineModule("wrm/comp/ListService", mod6);
 
 	wrm.defineModule("wrm/comp/CreateService", mod7);
 
@@ -123,6 +127,8 @@
 	wrm.defineModule("wrm/comp/LoginService", mod11);
 
 	wrm.defineModule("wrm/comp/RegisterService", mod12);
+
+	wrm.defineModule("wrm/comp/LogoutService", mod13);
 
 /***/ },
 /* 1 */
@@ -2134,6 +2140,59 @@
 	    value: true
 	});
 	/**
+	 * Service for Logout operations.
+	 * 
+	 * @constructor
+	 * @extends wrm.core.AbstractOperationService
+	 * @param {string} id
+	 * @param {!Object} descr
+	 * @param {!wrm.core.Manager} manager
+	 */
+	exports.default = wrm.defineService(wrm.core.AbstractOperationService, {
+
+	    /** @override */
+	    initialize: function (descr) {
+	        var thisService = this;
+
+	        /**
+	         * @private
+	         * @type {boolean}
+	         */
+	        this._removeUsername = descr["removeUsername"] || false;
+
+	        /**
+	         * @private
+	         * @type {!wrm.core.SecurityService}
+	         */
+	        this._securityService; // set below
+
+	        return this.getManager().getSecurityService().then(function (securityService) {
+	            thisService._securityService = securityService;
+	        });
+	    },
+
+	    /** @override */
+	    executeOperation: function (context) {
+	        var securityService = this._securityService;
+
+	        /* Clear authentication information */
+	        return securityService.clearAuthInfo(this._removeUsername).then(function () {
+	            context.clearPastNavigationsHistory();
+	            return new wrm.nav.Output("success");
+	        }, function () {
+	            return new wrm.nav.Output("error");
+	        });
+	    } });
+	module.exports = exports.default;
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	/**
 	 * Service for EMail validation rules.
 	 * 
 	 * @constructor
@@ -2162,7 +2221,7 @@
 	module.exports = exports.default;
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	Object.defineProperty(exports, "__esModule", {

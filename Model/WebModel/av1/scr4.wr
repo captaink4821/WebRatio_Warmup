@@ -1,8 +1,8 @@
 <Screen xmlns:gr="http://www.webratio.com/2006/WebML/Graph" xmlns:layout="http://www.webratio.com/2006/WebML/Layout" gr:x="10" gr:y="-65" id="av1#scr4" name="Login">
   <ViewComponents>
     <Form gr:x="20" gr:y="0" id="av1#scr4#enu2" name="Login" fieldOrder="av1#scr4#enu2#fld3 av1#scr4#enu2#fld6" eventOrder="av1#scr4#enu2#oslte8 av1#scr4#enu2#oslte11">
-      <Field id="av1#scr4#enu2#fld6" name="Password" type="password" modifiable="true"/>
-      <Field id="av1#scr4#enu2#fld3" name="Username" type="string" contentType="text/plain" modifiable="true"/>
+      <Field id="av1#scr4#enu2#fld6" name="Password" type="password" modifiable="true" preloaded="true"/>
+      <Field id="av1#scr4#enu2#fld3" name="Username" type="string" contentType="text/plain" modifiable="true" preloaded="true"/>
       <Events>
         <OnSelectEvent id="av1#scr4#enu2#oslte8" name="Login" validate="true">
           <NavigationFlow id="av1#scr4#enu2#oslte8#nf5" to="av1#act3">

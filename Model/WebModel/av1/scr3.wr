@@ -14,17 +14,20 @@
       <Field id="av1#scr3#enu1#fld1" name="Name" type="string" preloaded="true" modifiable="true"/>
       <Field id="av1#scr3#enu1#fld5" name="seen" type="boolean" preloaded="true" modifiable="true"/>
     </Form>
-    <Selector gr:x="15" gr:y="100" id="av1#scr3#seu1" dataBinding="cls1">
+    <Selector gr:x="15" gr:y="100" id="av1#scr3#seu1" dataBinding="cls2" distinctAttributes="cls2#att18 cls2#att19 cls2#att20 cls2#att21">
       <ConditionalExpression id="av1#scr3#seu1#sc3" defaultPolicy="fill" booleanOperator="and">
         <KeyCondition id="av1#scr3#seu1#sc3#kcond3" name="oid" predicate="in" implied="false"/>
       </ConditionalExpression>
       <DataFlow id="av1#scr3#seu1#df4" to="av1#scr3#enu1">
-        <ParameterBinding id="av1#scr3#seu1#df4#par14" source="data.cls1#att2" target="av1#scr3#enu1#fld1_preload" name="Name - Name"/>
-        <ParameterBinding id="av1#scr3#seu1#df4#par16" source="data.cls1#att3" target="av1#scr3#enu1#fld2_preload" name="Species - Species"/>
-        <ParameterBinding id="av1#scr3#seu1#df4#par38" source="data.cls1#att4" target="av1#scr3#enu1#fld5_preload" name="Seen - seen"/>
+        <ParameterBinding id="av1#scr3#seu1#df4#par14" source="data.cls2#att19" target="av1#scr3#enu1#fld1_preload" name="Name - Name"/>
+        <ParameterBinding id="av1#scr3#seu1#df4#par16" source="data.cls2#att20" target="av1#scr3#enu1#fld2_preload" name="Species - Species"/>
+        <ParameterBinding id="av1#scr3#seu1#df4#par38" source="data.cls2#att21" target="av1#scr3#enu1#fld5_preload" name="Seen - seen"/>
       </DataFlow>
       <DataFlow id="av1#scr3#seu1#df5" to="av1#act1" gr:bendpoints="243,-99,-32,161">
-        <ParameterBinding id="av1#scr3#seu1#df5#par17" source="data.cls1#att1" target="av1#act1.tlads0#ad1#ipd1#pdp1" name="oid - animal id"/>
+        <ParameterBinding id="av1#scr3#seu1#df5#par17" source="data.cls2#att18" target="av1#act1.tlads0#ad1#ipd1#pdp1" name="oid - animal id"/>
+        <ParameterBinding id="av1#scr3#seu1#df5#par39" source="data.cls2#att19" target="av1#act1.tlads0#ad1#ipd1#pdp2" name="Name - Name"/>
+        <ParameterBinding id="av1#scr3#seu1#df5#par40" source="data.cls2#att21" target="av1#act1.tlads0#ad1#ipd1#pdp4" name="Seen - Seen"/>
+        <ParameterBinding id="av1#scr3#seu1#df5#par41" source="data.cls2#att20" target="av1#act1.tlads0#ad1#ipd1#pdp3" name="Species - Species"/>
       </DataFlow>
     </Selector>
   </ViewComponents>

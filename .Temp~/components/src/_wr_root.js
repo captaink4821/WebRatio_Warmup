@@ -7,20 +7,20 @@
 	import * as mod1 from "wrm\/comp\/SelectorService";
 	wrm.defineModule("wrm\/comp\/SelectorService", mod1)
 
-	import * as mod2 from "wrm\/comp\/DetailsService";
-	wrm.defineModule("wrm\/comp\/DetailsService", mod2)
+	import * as mod2 from "wrm\/comp\/val\/EMailValidationRuleService";
+	wrm.defineModule("wrm\/comp\/val\/EMailValidationRuleService", mod2)
 
-	import * as mod3 from "wrm\/comp\/MessageService";
-	wrm.defineModule("wrm\/comp\/MessageService", mod3)
+	import * as mod3 from "wrm\/comp\/val\/MandatoryValidationRuleService";
+	wrm.defineModule("wrm\/comp\/val\/MandatoryValidationRuleService", mod3)
 
-	import * as mod4 from "wrm\/comp\/ListService";
-	wrm.defineModule("wrm\/comp\/ListService", mod4)
+	import * as mod4 from "wrm\/comp\/DetailsService";
+	wrm.defineModule("wrm\/comp\/DetailsService", mod4)
 
-	import * as mod5 from "wrm\/comp\/val\/EMailValidationRuleService";
-	wrm.defineModule("wrm\/comp\/val\/EMailValidationRuleService", mod5)
+	import * as mod5 from "wrm\/comp\/MessageService";
+	wrm.defineModule("wrm\/comp\/MessageService", mod5)
 
-	import * as mod6 from "wrm\/comp\/val\/MandatoryValidationRuleService";
-	wrm.defineModule("wrm\/comp\/val\/MandatoryValidationRuleService", mod6)
+	import * as mod6 from "wrm\/comp\/ListService";
+	wrm.defineModule("wrm\/comp\/ListService", mod6)
 
 	import * as mod7 from "wrm\/comp\/CreateService";
 	wrm.defineModule("wrm\/comp\/CreateService", mod7)
@@ -39,4 +39,7 @@
 
 	import * as mod12 from "wrm\/comp\/RegisterService";
 	wrm.defineModule("wrm\/comp\/RegisterService", mod12)
+
+	import * as mod13 from "wrm\/comp\/LogoutService";
+	wrm.defineModule("wrm\/comp\/LogoutService", mod13)
 
