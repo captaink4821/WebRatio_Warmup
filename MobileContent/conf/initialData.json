@@ -4,5 +4,18 @@
     "Name" : "Brown Bear",
     "Species" : "Bear",
     "Native" : 1
-  } ]
+  } ,
+  {
+    "oid" : 2,
+    "Name" : "Barn Owl",
+    "Species" : "Owl",
+    "Native" : 0
+  } ,
+  {
+    "oid" : 3,
+    "Name" : "Ring Tailed Lemur",
+    "Species" : "Lemur",
+    "Native" : 1
+  } 
+  ]
 }
